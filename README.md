@@ -48,31 +48,10 @@ Instale dependências PHP/Node e gere o `.env`:
 ```bash
 docker compose exec app sh -lc "composer install && npm install"
 docker compose exec app sh -lc "cp .env.example .env && php artisan key:generate"
+docker compose exec app chown -R www-data:www-data storage bootstrap/cache
 ```
 
-### 4. Variáveis de ambiente (Docker)
-
-O arquivo `.env.example` vem preparado para desenvolvimento local (SQLite). **Para usar MySQL e Redis dos containers**, ajuste o `.env` (substitua ou comente `DB_CONNECTION=sqlite` e use o bloco abaixo — valores alinhados ao `docker-compose.yml`):
-
-```env
-APP_URL=http://localhost:8080
-
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=laravel
-DB_USERNAME=laravel
-DB_PASSWORD=root
-
-REDIS_HOST=redis
-
-SESSION_DOMAIN=localhost
-SANCTUM_STATEFUL_DOMAINS=localhost:8080
-```
-
-*(No final do `.env.example` há o mesmo bloco comentado como referência.)*
-
-### 5. Banco, front-end e documentação
+### 4. Banco, front-end e documentação
 
 ```bash
 docker compose exec app sh -lc "php artisan migrate --force --seed"
@@ -80,10 +59,18 @@ docker compose exec app sh -lc "npm run build"
 docker compose exec app sh -lc "php artisan l5-swagger:generate"
 ```
 
-### 6. Credenciais de avaliação (seed padrão)
+### 5. Credenciais de avaliação (seed padrão)
 
 - **E-mail:** `admin@example.com`
 - **Senha:** `password`
+
+## 🚀 Atalho: Configuração Rápida
+
+Para executar de uma vez os passos 3, 4 e 5:
+
+```bash
+docker compose exec app sh -lc "composer install && npm install && cp .env.example .env && php artisan key:generate && chown -R www-data:www-data storage bootstrap/cache && php artisan migrate --force --seed && npm run build && php artisan l5-swagger:generate"
+```
 
 ## 🔐 Autenticação da API (Swagger)
 
