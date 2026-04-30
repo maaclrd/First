@@ -22,13 +22,16 @@ class ProductController extends Controller
         security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'min_price', in: 'query', schema: new OA\Schema(type: 'number', format: 'float')),
+            new OA\Parameter(name: 'max_price', in: 'query', schema: new OA\Schema(type: 'number', format: 'float')),
+            new OA\Parameter(name: 'min_stock', in: 'query', schema: new OA\Schema(type: 'integer')),
             new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer')),
         ],
         responses: [new OA\Response(response: 200, description: 'Lista de produtos')]
     )]
     public function index(Request $request): JsonResponse
     {
-        $products = $this->productService->all($request->only(['search', 'per_page']));
+        $products = $this->productService->all($request->only(['search', 'min_price', 'max_price', 'min_stock', 'per_page']));
 
         return response()->json([
             'data' => [

@@ -10,6 +10,7 @@ const store = useProductStore();
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const showViewModal = ref(false);
+const showAdvancedFilters = ref(false);
 
 const createForm = reactive({
     name: '',
@@ -172,6 +173,43 @@ onMounted(async () => {
                         >
                             Buscar
                         </button>
+                    </div>
+                    <div class="mt-3 flex justify-end">
+                        <button
+                            type="button"
+                            class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            @click="showAdvancedFilters = !showAdvancedFilters"
+                        >
+                            Filtros Avançados
+                        </button>
+                    </div>
+                    <div v-if="showAdvancedFilters" class="mt-3 grid gap-3 md:grid-cols-3">
+                        <input
+                            v-model="store.minPrice"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="Preço Mínimo"
+                            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-sm text-slate-700 focus:border-[#0042b1] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0042b1]"
+                            @keyup.enter="applySearch"
+                        />
+                        <input
+                            v-model="store.maxPrice"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="Preço Máximo"
+                            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-sm text-slate-700 focus:border-[#0042b1] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0042b1]"
+                            @keyup.enter="applySearch"
+                        />
+                        <input
+                            v-model="store.minStock"
+                            type="number"
+                            min="0"
+                            placeholder="Estoque Mínimo"
+                            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-sm text-slate-700 focus:border-[#0042b1] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0042b1]"
+                            @keyup.enter="applySearch"
+                        />
                     </div>
 
                     <p v-if="store.message" class="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-sm text-[#0042b1]">

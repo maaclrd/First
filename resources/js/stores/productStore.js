@@ -12,6 +12,9 @@ export const useProductStore = defineStore('products', {
             total: 0,
         },
         search: '',
+        minPrice: '',
+        maxPrice: '',
+        minStock: '',
         loading: false,
         submitting: false,
         message: '',
@@ -29,6 +32,9 @@ export const useProductStore = defineStore('products', {
                     params: {
                         page,
                         search: this.search || undefined,
+                        min_price: this.minPrice !== '' ? this.minPrice : undefined,
+                        max_price: this.maxPrice !== '' ? this.maxPrice : undefined,
+                        min_stock: this.minStock !== '' ? this.minStock : undefined,
                         per_page: this.pagination.per_page,
                     },
                 });

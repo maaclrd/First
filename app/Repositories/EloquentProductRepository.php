@@ -11,11 +11,23 @@ class EloquentProductRepository implements ProductRepositoryInterface
     {
         $perPage = (int) ($filters['per_page'] ?? 10);
         $search = trim((string) ($filters['search'] ?? ''));
+        $minPrice = $filters['min_price'] ?? null;
+        $maxPrice = $filters['max_price'] ?? null;
+        $minStock = $filters['min_stock'] ?? null;
 
         $query = Product::query()->latest('id');
 
         if ($search !== '') {
             $query->where('name', 'like', "%{$search}%");
+        }
+        if ($minPrice !== null && $minPrice !== '') {
+            $query->where('price', '>=', (float) $minPrice);
+        }
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $query->where('price', '<=', (float) $maxPrice);
+        }
+        if ($minStock !== null && $minStock !== '') {
+            $query->where('stock', '>=', (int) $minStock);
         }
 
         return $query->paginate($perPage)->withQueryString();

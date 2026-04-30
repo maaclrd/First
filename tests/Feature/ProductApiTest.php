@@ -24,6 +24,60 @@ it('lista produtos com estrutura padronizada', function () {
         ]);
 });
 
+it('filtra produtos por preco minimo', function () {
+    $low = Product::factory()->create(['price' => 50.00]);
+    $mid = Product::factory()->create(['price' => 150.00]);
+    $high = Product::factory()->create(['price' => 300.00]);
+
+    $response = $this->getJson('/api/products?min_price=120');
+
+    $response->assertOk()
+        ->assertJsonPath('errors', null)
+        ->assertJsonCount(2, 'data.items');
+
+    $ids = collect($response->json('data.items'))->pluck('id')->all();
+
+    expect($ids)
+        ->toContain($mid->id, $high->id)
+        ->not->toContain($low->id);
+});
+
+it('filtra produtos por preco maximo', function () {
+    $low = Product::factory()->create(['price' => 40.00]);
+    $mid = Product::factory()->create(['price' => 120.00]);
+    $high = Product::factory()->create(['price' => 260.00]);
+
+    $response = $this->getJson('/api/products?max_price=130');
+
+    $response->assertOk()
+        ->assertJsonPath('errors', null)
+        ->assertJsonCount(2, 'data.items');
+
+    $ids = collect($response->json('data.items'))->pluck('id')->all();
+
+    expect($ids)
+        ->toContain($low->id, $mid->id)
+        ->not->toContain($high->id);
+});
+
+it('filtra produtos por estoque minimo', function () {
+    $low = Product::factory()->create(['stock' => 2]);
+    $mid = Product::factory()->create(['stock' => 8]);
+    $high = Product::factory()->create(['stock' => 20]);
+
+    $response = $this->getJson('/api/products?min_stock=8');
+
+    $response->assertOk()
+        ->assertJsonPath('errors', null)
+        ->assertJsonCount(2, 'data.items');
+
+    $ids = collect($response->json('data.items'))->pluck('id')->all();
+
+    expect($ids)
+        ->toContain($mid->id, $high->id)
+        ->not->toContain($low->id);
+});
+
 it('cria um produto', function () {
     $payload = [
         'name' => 'Notebook Ultra',
