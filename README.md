@@ -1,69 +1,56 @@
-Desafio Técnico: Gestão de Produtos (Laravel + Vue 3)
-Este projeto consiste em um sistema para gerenciamento de produtos, desenvolvido como parte de um processo seletivo para Desenvolvedor PHP Pleno. A aplicação utiliza uma arquitetura moderna e escalável, focada em boas práticas de desenvolvimento e qualidade de código.
+# 📦 Gerenciamento de Produtos - Desafio Técnico
 
-🚀 Tecnologias Utilizadas
-Backend: PHP 8.3 e Laravel 11.
+Este projeto é uma aplicação Full-Stack desenvolvida para o gerenciamento de produtos, focada em **Arquitetura Limpa**, **SOLID** e **Qualidade de Software**. A solução atende aos requisitos de um CRUD completo e uma API RESTful protegida.
 
-Frontend: Vue.js 3 (Composition API), Inertia.js e Pinia (Estado Global).
+## 🏛️ Arquitetura e Diferenciais Técnicos
 
-Banco de Dados: MySQL 8.0 e Redis (Cache/Fila).
+Para este desafio, optei por uma estrutura que demonstra maturidade técnica de nível Pleno/Sênior:
 
-Infraestrutura: Docker e Docker Compose.
+* **Repository Pattern:** Implementação de `ProductRepositoryInterface` para desacoplar a persistência de dados (Eloquent) da lógica de negócio.
+* **Service Layer:** Toda a regra de negócio está centralizada na `ProductService`, mantendo os controllers enxutos e seguindo o princípio de Responsabilidade Única (SRP).
+* **PestPHP:** Utilização do framework de testes mais moderno do ecossistema Laravel (conforme requisitos da vaga).
+* **Documentação Swagger:** API totalmente documentada e testável via interface interativa.
+* **Monitoramento:** Configuração de Redis e Worker para processamento de filas (Queues/Jobs).
 
-Testes: PestPHP (Feature e Unit).
+## 🚀 Tecnologias Utilizadas
 
-Documentação: Swagger (L5-Swagger).
+* **Backend:** PHP 8.3 + Laravel 11
+* **Frontend:** Vue 3 (Composition API) + Inertia.js + Pinia (Estado Global)
+* **Infra:** Docker & Docker Compose
+* **Banco de Dados:** MySQL 8.0 & Redis
+* **Testes:** PestPHP
+* **UI/UX:** Estética baseada no Padrão Digital de Governo (Gov.br)
 
-UI/UX: Design baseado no Padrão Digital de Governo (Gov.br).
+## 🛠️ Como Executar o Projeto
 
-🏗️ Arquitetura e Padrões (SOLID)
-A aplicação foi estruturada seguindo princípios de Clean Code e SOLID:
+Siga os passos abaixo para subir o ambiente via Docker:
 
-Repository Pattern: Desacoplamento da camada de persistência com o uso de Interfaces.
-
-Service Layer: Centralização da lógica de negócio, garantindo que os Controllers permaneçam enxutos (Single Responsibility).
-
-Dependency Injection: Inversão de dependência configurada via Service Providers.
-
-API Resources: Padronização das respostas da API para consumo externo.
-
-🛠️ Como Executar o Projeto
-Siga os passos abaixo para subir o ambiente localmente utilizando Docker:
-
-Clonar o repositório:
-
-Bash
-git clone git@github.com:maaclrd/First.git
-cd First
-Subir os containers:
+1. **Clonar e Acessar:**
+   ```bash
+   git clone git@github.com:maaclrd/First.git
+   cd First
+   Subir Infraestrutura:
 
 Bash
 docker-compose up -d --build
-Instalar dependências e configurar o banco:
+Configuração Inicial (Executar no container app):
 
 Bash
-# Instalação do Composer e NPM
 docker-compose exec app sh -lc "composer install && npm install"
-
-# Configuração do ambiente
 docker-compose exec app sh -lc "cp .env.example .env && php artisan key:generate"
-
-# Execução das migrations
-docker-compose exec app sh -lc "php artisan migrate"
-
-# Build dos assets do frontend
+docker-compose exec app sh -lc "php artisan migrate --force"
 docker-compose exec app sh -lc "npm run build"
-Gerar Documentação Swagger:
+Gerar Documentação da API:
 
 Bash
 docker-compose exec app sh -lc "php artisan l5-swagger:generate"
-🔗 Acessos
+🔗 Endpoints Principais
 Aplicação Web: http://localhost:8080
 
-Documentação da API (Swagger): http://localhost:8080/api/documentation
+Documentação Swagger (API): http://localhost:8080/api/documentation
 
 ✅ Testes Automatizados
-Para validar a integridade da aplicação e as regras de negócio, utilize o comando:
+Para rodar a suíte de testes (Feature e Unit):
 
 Bash
 docker-compose exec app sh -lc "php artisan test"
