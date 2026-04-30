@@ -1,0 +1,201 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Produtos",
+        "description": "Documentação da API de gestão de produtos.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Servidor principal"
+        }
+    ],
+    "paths": {
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Lista produtos",
+                "operationId": "d97d1c3727cbac49708b85f7d11f7d58",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de produtos"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Cria produto",
+                "operationId": "785644b7d7dd38af4b51dafd0fbc1b6d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "stock"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "stock": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produto criado"
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Visualiza produto",
+                "operationId": "c87fb2e4d617e7b36c712cad358acdb8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto encontrado"
+                    },
+                    "404": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Atualiza produto",
+                "operationId": "416e4959a3919547eb609d87e3db9135",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "stock"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "stock": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produto atualizado"
+                    },
+                    "404": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Remove produto",
+                "operationId": "b49ce9f3cb168b233245548fb4ef36d3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto removido"
+                    },
+                    "404": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Produtos",
+            "description": "Produtos"
+        }
+    ]
+}
