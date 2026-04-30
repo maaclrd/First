@@ -91,3 +91,15 @@ Para testar endpoints protegidos:
 ```bash
 docker compose exec app sh -lc "php artisan test"
 ```
+## 📸 Screenshots
+
+| Listagem e Filtros | Cadastro de Produtos |
+|---|---|
+| ![Inicial](screenshots/tela_inicial.png) | ![Login](screenshots/tela_login.png) |
+| ![Listagem](screenshots/listagem.png) | ![Cadastro](screenshots/tela_crud.png) |
+| ![Filtro](screenshots/filtro_avancado.png) |  |
+
+### 🛠️ API Documentation (Swagger)
+| Token | Listagem |
+|---|---|
+| ![Swagger Token](screenshots/swagger_token.png) | ![Swagger](screenshots/swagger.png) |
