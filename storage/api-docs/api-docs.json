@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://my-default-host.com",
+            "url": "http://localhost:8080",
             "description": "Servidor principal"
         }
     ],
@@ -39,7 +39,12 @@
                     "200": {
                         "description": "Lista de produtos"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -81,7 +86,12 @@
                     "201": {
                         "description": "Produto criado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/products/{id}": {
@@ -108,7 +118,12 @@
                     "404": {
                         "description": "Produto não encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -163,7 +178,12 @@
                     "404": {
                         "description": "Produto não encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -188,7 +208,21 @@
                     "404": {
                         "description": "Produto não encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "Token",
+                "scheme": "bearer"
             }
         }
     },

@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useProductStore } from '@/stores/productStore';
 import { Head } from '@inertiajs/vue3';
+import { humanizeClientMessage } from '@/utils/validationMessages';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 const store = useProductStore();
@@ -25,9 +26,44 @@ const editForm = reactive({
     stock: '',
 });
 
-const flattenedErrors = computed(() =>
-    store.errors ? Object.values(store.errors).flat() : [],
-);
+const modalFieldKeys = new Set(['name', 'description', 'price', 'stock']);
+
+const listPageErrors = computed(() => {
+    if (!store.errors) {
+        return [];
+    }
+    const out = [];
+    for (const [key, val] of Object.entries(store.errors)) {
+        if (!modalFieldKeys.has(key)) {
+            const arr = Array.isArray(val) ? val : [val];
+            out.push(...arr.map((msg) => humanizeClientMessage(msg)));
+        }
+    }
+    return out;
+});
+
+function fieldMessages(field) {
+    const raw = store.errors?.[field];
+    if (!raw) {
+        return [];
+    }
+    const arr = Array.isArray(raw) ? raw : [raw];
+    return arr.map((msg) => humanizeClientMessage(msg));
+}
+
+function onModalFieldInput(field) {
+    store.clearProductFieldError(field);
+}
+
+function closeCreateModal() {
+    showCreateModal.value = false;
+    store.clearProductFormErrors();
+}
+
+function closeEditModal() {
+    showEditModal.value = false;
+    store.clearProductFormErrors();
+}
 
 const openCreateModal = () => {
     store.clearFeedback();
@@ -142,8 +178,8 @@ onMounted(async () => {
                         {{ store.message }}
                     </p>
 
-                    <ul v-if="flattenedErrors.length" class="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-                        <li v-for="(error, index) in flattenedErrors" :key="index">{{ error }}</li>
+                    <ul v-if="listPageErrors.length" class="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <li v-for="(error, index) in listPageErrors" :key="index">{{ error }}</li>
                     </ul>
 
                     <div class="mt-6 overflow-x-auto">
@@ -175,7 +211,7 @@ onMounted(async () => {
                                 </tr>
                                 <tr v-if="!store.items.length">
                                     <td colspan="4" class="px-4 py-6 text-center text-sm text-slate-500">
-                                        Nenhum produto encontrado.
+                                        Nenhum produto encontrado. Clique em 'Novo Produto' para começar.
                                     </td>
                                 </tr>
                             </tbody>
@@ -212,39 +248,163 @@ onMounted(async () => {
         </div>
 
         <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-            <div class="w-full max-w-xl rounded-xl bg-white p-6">
+            <div class="w-full max-w-xl rounded-xl bg-white px-6 py-4 shadow-lg">
                 <h3 class="text-lg font-semibold text-[#0042b1]">Novo Produto</h3>
-                <div class="mt-4 grid gap-3">
-                    <input v-model="createForm.name" type="text" placeholder="Nome" class="rounded-lg border border-slate-300 px-4 py-2 text-sm" />
-                    <textarea v-model="createForm.description" rows="3" placeholder="Descrição" class="rounded-lg border border-slate-300 px-4 py-2 text-sm"></textarea>
-                    <input v-model="createForm.price" type="number" step="0.01" min="0" placeholder="Preço" class="rounded-lg border border-slate-300 px-4 py-2 text-sm" />
-                    <input v-model="createForm.stock" type="number" min="0" placeholder="Estoque" class="rounded-lg border border-slate-300 px-4 py-2 text-sm" />
+                <div class="mt-4 grid gap-2">
+                    <div class="relative mb-3 pb-6">
+                        <input
+                            v-model="createForm.name"
+                            type="text"
+                            placeholder="Nome"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('name')"
+                        />
+                        <p
+                            v-for="(msg, i) in fieldMessages('name')"
+                            :key="'cn-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
+                    <div class="relative mb-3 pb-6">
+                        <textarea
+                            v-model="createForm.description"
+                            rows="3"
+                            placeholder="Descrição"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('description')"
+                        ></textarea>
+                        <p
+                            v-for="(msg, i) in fieldMessages('description')"
+                            :key="'cd-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
+                    <div class="relative mb-3 pb-6">
+                        <input
+                            v-model="createForm.price"
+                            type="number"
+                            step="0.01"
+                            placeholder="Preço"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('price')"
+                        />
+                        <p
+                            v-for="(msg, i) in fieldMessages('price')"
+                            :key="'cp-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
+                    <div class="relative mb-3 pb-6">
+                        <input
+                            v-model="createForm.stock"
+                            type="number"
+                            min="0"
+                            placeholder="Estoque"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('stock')"
+                        />
+                        <p
+                            v-for="(msg, i) in fieldMessages('stock')"
+                            :key="'cs-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
                 </div>
                 <div class="mt-6 flex justify-end gap-2">
-                    <button class="rounded border border-slate-300 px-4 py-2 text-sm" @click="showCreateModal = false">Cancelar</button>
-                    <button class="rounded bg-[#0042b1] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" :disabled="store.submitting" @click="createProduct">Salvar</button>
+                    <button type="button" class="rounded border border-slate-300 px-4 py-2 text-sm" @click="closeCreateModal">Cancelar</button>
+                    <button type="button" class="rounded bg-[#0042b1] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" :disabled="store.submitting" @click="createProduct">Salvar</button>
                 </div>
             </div>
         </div>
 
         <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-            <div class="w-full max-w-xl rounded-xl bg-white p-6">
+            <div class="w-full max-w-xl rounded-xl bg-white px-6 py-4 shadow-lg">
                 <h3 class="text-lg font-semibold text-[#0042b1]">Editar Produto</h3>
-                <div class="mt-4 grid gap-3">
-                    <input v-model="editForm.name" type="text" placeholder="Nome" class="rounded-lg border border-slate-300 px-4 py-2 text-sm" />
-                    <textarea v-model="editForm.description" rows="3" placeholder="Descrição" class="rounded-lg border border-slate-300 px-4 py-2 text-sm"></textarea>
-                    <input v-model="editForm.price" type="number" step="0.01" min="0" placeholder="Preço" class="rounded-lg border border-slate-300 px-4 py-2 text-sm" />
-                    <input v-model="editForm.stock" type="number" min="0" placeholder="Estoque" class="rounded-lg border border-slate-300 px-4 py-2 text-sm" />
+                <div class="mt-4 grid gap-2">
+                    <div class="relative mb-3 pb-6">
+                        <input
+                            v-model="editForm.name"
+                            type="text"
+                            placeholder="Nome"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('name')"
+                        />
+                        <p
+                            v-for="(msg, i) in fieldMessages('name')"
+                            :key="'en-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
+                    <div class="relative mb-3 pb-6">
+                        <textarea
+                            v-model="editForm.description"
+                            rows="3"
+                            placeholder="Descrição"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('description')"
+                        ></textarea>
+                        <p
+                            v-for="(msg, i) in fieldMessages('description')"
+                            :key="'ed-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
+                    <div class="relative mb-3 pb-6">
+                        <input
+                            v-model="editForm.price"
+                            type="number"
+                            step="0.01"
+                            placeholder="Preço"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('price')"
+                        />
+                        <p
+                            v-for="(msg, i) in fieldMessages('price')"
+                            :key="'ep-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
+                    <div class="relative mb-3 pb-6">
+                        <input
+                            v-model="editForm.stock"
+                            type="number"
+                            min="0"
+                            placeholder="Estoque"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm"
+                            @input="onModalFieldInput('stock')"
+                        />
+                        <p
+                            v-for="(msg, i) in fieldMessages('stock')"
+                            :key="'es-' + i"
+                            class="absolute bottom-0 left-4 right-4 max-w-full text-left text-[11px] font-medium leading-tight text-red-600"
+                        >
+                            {{ msg }}
+                        </p>
+                    </div>
                 </div>
                 <div class="mt-6 flex justify-end gap-2">
-                    <button class="rounded border border-slate-300 px-4 py-2 text-sm" @click="showEditModal = false">Cancelar</button>
-                    <button class="rounded bg-[#0042b1] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" :disabled="store.submitting" @click="updateProduct">Atualizar</button>
+                    <button type="button" class="rounded border border-slate-300 px-4 py-2 text-sm" @click="closeEditModal">Cancelar</button>
+                    <button type="button" class="rounded bg-[#0042b1] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" :disabled="store.submitting" @click="updateProduct">Atualizar</button>
                 </div>
             </div>
         </div>
 
         <div v-if="showViewModal && store.selectedProduct" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-            <div class="w-full max-w-xl rounded-xl bg-white p-6">
+            <div class="w-full max-w-xl rounded-xl bg-white px-6 py-4 shadow-lg">
                 <h3 class="text-lg font-semibold text-[#0042b1]">Visualizar Produto</h3>
                 <dl class="mt-4 space-y-3 text-sm text-slate-700">
                     <div>

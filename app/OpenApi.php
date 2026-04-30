@@ -10,7 +10,13 @@ use OpenApi\Attributes as OA;
     description: 'Documentação da API de gestão de produtos.'
 )]
 #[OA\Server(
-    url: L5_SWAGGER_CONST_HOST,
+    url: 'http://localhost:8080',
     description: 'Servidor principal'
+)]
+#[OA\SecurityScheme(
+    securityScheme: 'bearerAuth',
+    type: 'http',
+    scheme: 'bearer',
+    bearerFormat: 'Token'
 )]
 class OpenApi {}

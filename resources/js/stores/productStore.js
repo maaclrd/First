@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
+import { normalizeErrorBag } from '@/utils/validationMessages';
 
 export const useProductStore = defineStore('products', {
     state: () => ({
@@ -21,6 +22,7 @@ export const useProductStore = defineStore('products', {
         async fetchProducts(page = 1) {
             this.loading = true;
             this.errors = null;
+            this.message = '';
 
             try {
                 const { data } = await axios.get('/api/products', {
@@ -35,9 +37,27 @@ export const useProductStore = defineStore('products', {
                 this.pagination = data.data.pagination;
                 this.message = data.message;
             } catch (error) {
-                this.errors = error.response?.data?.errors ?? {
-                    request: ['Não foi possível carregar os produtos.'],
-                };
+                const statusCode = error.response?.status;
+
+                if (statusCode === 401) {
+                    this.items = [];
+                    this.pagination = {
+                        current_page: 1,
+                        last_page: 1,
+                        per_page: 10,
+                        total: 0,
+                    };
+                    this.errors = {
+                        request: ['Sessão expirada. Por favor, faça login novamente.'],
+                    };
+                    return;
+                }
+
+                if (!statusCode || statusCode >= 500) {
+                    this.errors = {
+                        request: ['Não foi possível carregar os produtos.'],
+                    };
+                }
             } finally {
                 this.loading = false;
             }
@@ -53,9 +73,14 @@ export const useProductStore = defineStore('products', {
                 await this.fetchProducts(1);
                 return true;
             } catch (error) {
-                this.errors = error.response?.data?.errors ?? {
-                    request: ['Não foi possível criar o produto.'],
-                };
+                const bag = error.response?.data?.errors;
+                if (bag && typeof bag === 'object' && !Array.isArray(bag)) {
+                    this.errors = normalizeErrorBag(bag);
+                } else {
+                    this.errors = {
+                        request: ['Não foi possível criar o produto.'],
+                    };
+                }
                 return false;
             } finally {
                 this.submitting = false;
@@ -72,9 +97,14 @@ export const useProductStore = defineStore('products', {
                 await this.fetchProducts(this.pagination.current_page);
                 return true;
             } catch (error) {
-                this.errors = error.response?.data?.errors ?? {
-                    request: ['Não foi possível atualizar o produto.'],
-                };
+                const bag = error.response?.data?.errors;
+                if (bag && typeof bag === 'object' && !Array.isArray(bag)) {
+                    this.errors = normalizeErrorBag(bag);
+                } else {
+                    this.errors = {
+                        request: ['Não foi possível atualizar o produto.'],
+                    };
+                }
                 return false;
             } finally {
                 this.submitting = false;
@@ -91,9 +121,14 @@ export const useProductStore = defineStore('products', {
                 await this.fetchProducts(this.pagination.current_page);
                 return true;
             } catch (error) {
-                this.errors = error.response?.data?.errors ?? {
-                    request: ['Não foi possível remover o produto.'],
-                };
+                const bag = error.response?.data?.errors;
+                if (bag && typeof bag === 'object' && !Array.isArray(bag)) {
+                    this.errors = normalizeErrorBag(bag);
+                } else {
+                    this.errors = {
+                        request: ['Não foi possível remover o produto.'],
+                    };
+                }
                 return false;
             } finally {
                 this.submitting = false;
@@ -107,6 +142,25 @@ export const useProductStore = defineStore('products', {
         clearFeedback() {
             this.message = '';
             this.errors = null;
+        },
+
+        clearProductFieldError(field) {
+            if (!this.errors?.[field]) {
+                return;
+            }
+            const next = { ...this.errors };
+            delete next[field];
+            this.errors = Object.keys(next).length ? next : null;
+        },
+
+        clearProductFormErrors() {
+            if (!this.errors) {
+                return;
+            }
+            const keys = ['name', 'description', 'price', 'stock'];
+            const next = { ...this.errors };
+            keys.forEach((k) => delete next[k]);
+            this.errors = Object.keys(next).length ? next : null;
         },
     },
 });

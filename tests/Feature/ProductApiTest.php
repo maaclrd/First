@@ -1,6 +1,12 @@
 <?php
 
 use App\Models\Product;
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
+
+beforeEach(function () {
+    Sanctum::actingAs(User::factory()->create());
+});
 
 it('lista produtos com estrutura padronizada', function () {
     Product::factory()->count(3)->create();
@@ -46,6 +52,17 @@ it('valida dados ao criar um produto', function () {
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors(['name', 'price', 'stock']);
+});
+
+it('rejeita preço zero pois o preço deve ser positivo', function () {
+    $response = $this->postJson('/api/products', [
+        'name' => 'Produto Teste',
+        'price' => 0,
+        'stock' => 1,
+    ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors(['price']);
 });
 
 it('exibe um produto por id', function () {

@@ -19,6 +19,7 @@ class ProductController extends Controller
         path: '/api/products',
         tags: ['Produtos'],
         summary: 'Lista produtos',
+        security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')),
             new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer')),
@@ -48,6 +49,7 @@ class ProductController extends Controller
         path: '/api/products',
         tags: ['Produtos'],
         summary: 'Cria produto',
+        security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -77,6 +79,7 @@ class ProductController extends Controller
         path: '/api/products/{id}',
         tags: ['Produtos'],
         summary: 'Visualiza produto',
+        security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
@@ -108,6 +111,7 @@ class ProductController extends Controller
         path: '/api/products/{id}',
         tags: ['Produtos'],
         summary: 'Atualiza produto',
+        security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
@@ -151,6 +155,7 @@ class ProductController extends Controller
         path: '/api/products/{id}',
         tags: ['Produtos'],
         summary: 'Remove produto',
+        security: [['bearerAuth' => []]],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
