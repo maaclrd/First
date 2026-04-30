@@ -1,66 +1,69 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Desafio Técnico: Gestão de Produtos (Laravel + Vue 3)
+Este projeto consiste em um sistema para gerenciamento de produtos, desenvolvido como parte de um processo seletivo para Desenvolvedor PHP Pleno. A aplicação utiliza uma arquitetura moderna e escalável, focada em boas práticas de desenvolvimento e qualidade de código.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+🚀 Tecnologias Utilizadas
+Backend: PHP 8.3 e Laravel 11.
 
-## About Laravel
+Frontend: Vue.js 3 (Composition API), Inertia.js e Pinia (Estado Global).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Banco de Dados: MySQL 8.0 e Redis (Cache/Fila).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Infraestrutura: Docker e Docker Compose.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Testes: PestPHP (Feature e Unit).
 
-## Learning Laravel
+Documentação: Swagger (L5-Swagger).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+UI/UX: Design baseado no Padrão Digital de Governo (Gov.br).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+🏗️ Arquitetura e Padrões (SOLID)
+A aplicação foi estruturada seguindo princípios de Clean Code e SOLID:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Repository Pattern: Desacoplamento da camada de persistência com o uso de Interfaces.
 
-## Laravel Sponsors
+Service Layer: Centralização da lógica de negócio, garantindo que os Controllers permaneçam enxutos (Single Responsibility).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Dependency Injection: Inversão de dependência configurada via Service Providers.
 
-### Premium Partners
+API Resources: Padronização das respostas da API para consumo externo.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+🛠️ Como Executar o Projeto
+Siga os passos abaixo para subir o ambiente localmente utilizando Docker:
 
-## Contributing
+Clonar o repositório:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Bash
+git clone git@github.com:maaclrd/First.git
+cd First
+Subir os containers:
 
-## Code of Conduct
+Bash
+docker-compose up -d --build
+Instalar dependências e configurar o banco:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Bash
+# Instalação do Composer e NPM
+docker-compose exec app sh -lc "composer install && npm install"
 
-## Security Vulnerabilities
+# Configuração do ambiente
+docker-compose exec app sh -lc "cp .env.example .env && php artisan key:generate"
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Execução das migrations
+docker-compose exec app sh -lc "php artisan migrate"
 
-## License
+# Build dos assets do frontend
+docker-compose exec app sh -lc "npm run build"
+Gerar Documentação Swagger:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Bash
+docker-compose exec app sh -lc "php artisan l5-swagger:generate"
+🔗 Acessos
+Aplicação Web: http://localhost:8080
+
+Documentação da API (Swagger): http://localhost:8080/api/documentation
+
+✅ Testes Automatizados
+Para validar a integridade da aplicação e as regras de negócio, utilize o comando:
+
+Bash
+docker-compose exec app sh -lc "php artisan test"
